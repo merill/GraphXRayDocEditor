@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphXrayDocCreator", "GraphXrayDocCreator\GraphXrayDocCreator.csproj", "{F557D57E-60E6-4AF9-BDCE-4D0F537CDDAA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F557D57E-60E6-4AF9-BDCE-4D0F537CDDAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F557D57E-60E6-4AF9-BDCE-4D0F537CDDAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F557D57E-60E6-4AF9-BDCE-4D0F537CDDAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F557D57E-60E6-4AF9-BDCE-4D0F537CDDAA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {130B263D-D711-42DC-9028-75738D75D207}
+	EndGlobalSection
+EndGlobal
