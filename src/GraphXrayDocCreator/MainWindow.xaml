@@ -31,13 +31,17 @@
         />
         </DockPanel>
         <StackPanel Grid.Row="0" Grid.Column="1"></StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" Margin="10">
+        <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" Margin="10" >
             <Label x:Name="lblErrorMessage" Content="NA" Visibility="Collapsed" Foreground="#FFED0A0A"/>
             <Label x:Name="label" Content="Graph X-Ray repo folder:"/>
-            <TextBox x:Name="txtRepoPath" TextWrapping="Wrap" Text="C:\GitHub\SaveAsScriptHackathon" Width="200"/>
-            <Label x:Name="lblMarkdown" Content="Markdown:"/>
-            <TextBlock x:Name="txtMarkdown" TextWrapping="Wrap" Text="" Height="500"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="txtRepoPath" TextWrapping="Wrap" Text="C:\GitHub\SaveAsScriptHackathon" Width="200"/>
+                <Button x:Name="btnOpenRepo" Content="Open"/>
+            </StackPanel>
 
+            <Label x:Name="lblMarkdown" Content="Markdown:"/>
+            <TextBox x:Name="txtMarkdown" TextWrapping="Wrap"   AcceptsReturn="True"
+  VerticalScrollBarVisibility="Visible" Text="" Width="Auto" Height="300" HorizontalAlignment="Stretch"/>
         </StackPanel>
         <GridSplitter Grid.Column ="0" Background="Gray" Width="3"
                 HorizontalAlignment="Right" VerticalAlignment="Stretch"></GridSplitter>
