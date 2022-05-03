@@ -23,7 +23,7 @@
             Click="ButtonGo_Click"
             Content="Go"
         />
-                <TextBox Name="addressBar"/>
+                <TextBox Name="txtChromePortalUri"/>
             </DockPanel>
 
             <wv2:WebView2 Name="webView"
@@ -35,12 +35,14 @@
             <Label x:Name="lblErrorMessage" Content="NA" Visibility="Collapsed" Foreground="#FFED0A0A"/>
             <Label x:Name="label" Content="Graph X-Ray repo folder:"/>
             <StackPanel Orientation="Horizontal">
-                <TextBox x:Name="txtRepoPath" TextWrapping="Wrap" Text="C:\GitHub\SaveAsScriptHackathon" Width="200"/>
+                <TextBox x:Name="txtRepoPath" Text="C:\GitHub\SaveAsScriptHackathon" Width="200"/>
                 <Button x:Name="btnOpenRepo" Content="Open" Click="btnOpenRepo_Click"/>
             </StackPanel>
 
+            <Label x:Name="lblDocMapPortalUri" Content="DocMap Portal Uri:"/>
+            <TextBox x:Name="txtDocMapPortalUri" />
             <Label x:Name="lblMarkdown" Content="Markdown:"/>
-            <TextBox x:Name="txtMarkdown" TextWrapping="Wrap"   AcceptsReturn="True"
+            <TextBox x:Name="txtDocMapMarkdown" TextWrapping="Wrap"   AcceptsReturn="True"
   VerticalScrollBarVisibility="Visible" Text="" Width="Auto" Height="300" HorizontalAlignment="Stretch"/>
         </StackPanel>
         <GridSplitter Grid.Column ="0" Background="Gray" Width="3"

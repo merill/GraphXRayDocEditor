@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using GraphXrayDocCreator;
+using GraphXrayDocCreator.Model;
 using Microsoft.Web.WebView2.Core;
 
 
@@ -12,6 +13,8 @@ namespace WPFSample
     public partial class MainWindow : Window
     {
         private DocNavigator _docNavigator;
+        private DocMapModelView _currentDocMapView;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -21,7 +24,7 @@ namespace WPFSample
 
         private void WebView_SourceChanged(object sender, CoreWebView2SourceChangedEventArgs e)
         {
-            addressBar.Text = webView.Source.ToString();
+            txtChromePortalUri.Text = webView.Source.ToString();
             PageChanged();
         }
 
@@ -34,7 +37,7 @@ namespace WPFSample
         {
             if (webView != null && webView.CoreWebView2 != null)
             {
-                webView.CoreWebView2.Navigate(addressBar.Text);
+                webView.CoreWebView2.Navigate(txtChromePortalUri.Text);
             }
         }
 
@@ -65,7 +68,28 @@ namespace WPFSample
         {
             if (_docNavigator == null) return;
 
-            txtMarkdown.Text = _docNavigator.GetMarkdown(addressBar.Text);
+            LoadPage(txtChromePortalUri.Text);
+        }
+        public void LoadPage(string chromePortalUri)
+        {
+            var docMap = _docNavigator.GetDocMap(chromePortalUri);
+            if(docMap == null)
+            {
+                ClearContent();
+            }
+            else
+            {
+                _currentDocMapView = new DocMapModelView(docMap);
+                txtDocMapMarkdown.Text = _currentDocMapView.MarkdownContent;
+                txtDocMapPortalUri.Text = _currentDocMapView.PortalUri;
+            }
+        }
+
+        private void ClearContent()
+        {
+            txtDocMapMarkdown.Text = string.Empty;
+            txtDocMapPortalUri.Text = string.Empty;
+
         }
     }
 
