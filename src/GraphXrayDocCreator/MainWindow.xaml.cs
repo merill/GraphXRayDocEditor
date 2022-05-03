@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using GraphXrayDocCreator;
 using Microsoft.Web.WebView2.Core;
 
 
@@ -10,6 +11,7 @@ namespace WPFSample
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DocNavigator _docNavigator;
         public MainWindow()
         {
             InitializeComponent();
@@ -20,17 +22,12 @@ namespace WPFSample
         private void WebView_SourceChanged(object sender, CoreWebView2SourceChangedEventArgs e)
         {
             addressBar.Text = webView.Source.ToString();
+            PageChanged();
         }
 
         async void InitializeAsync()
         {
             await webView.EnsureCoreWebView2Async(null);
-        }
-
-        void UpdateAddressBar(object sender, CoreWebView2WebMessageReceivedEventArgs args)
-        {
-            String uri = args.TryGetWebMessageAsString();
-            addressBar.Text = uri;
         }
 
         private void ButtonGo_Click(object sender, RoutedEventArgs e)
@@ -41,6 +38,35 @@ namespace WPFSample
             }
         }
 
+        private void btnOpenRepo_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _docNavigator = new DocNavigator(txtRepoPath.Text);
+                PageChanged();
+                ClearError();
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+            }
+        }
+        private void ShowError(string message)
+        {
+            lblErrorMessage.Visibility = Visibility.Visible;
+            lblErrorMessage.Content = message;
+
+        }
+        private void ClearError()
+        {
+            lblErrorMessage.Visibility = Visibility.Collapsed;
+        }
+        private void PageChanged()
+        {
+            if (_docNavigator == null) return;
+
+            txtMarkdown.Text = _docNavigator.GetMarkdown(addressBar.Text);
+        }
     }
 
 }

@@ -36,7 +36,7 @@
             <Label x:Name="label" Content="Graph X-Ray repo folder:"/>
             <StackPanel Orientation="Horizontal">
                 <TextBox x:Name="txtRepoPath" TextWrapping="Wrap" Text="C:\GitHub\SaveAsScriptHackathon" Width="200"/>
-                <Button x:Name="btnOpenRepo" Content="Open"/>
+                <Button x:Name="btnOpenRepo" Content="Open" Click="btnOpenRepo_Click"/>
             </StackPanel>
 
             <Label x:Name="lblMarkdown" Content="Markdown:"/>
