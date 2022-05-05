@@ -2,12 +2,9 @@
 {
     internal class DocMapModelView
     {
-        public DocMapModelView(DocMap docMap)
-        {
-            MarkdownContent = docMap.MarkdownContent;
-            PortalUri = docMap.PortalUri;
-        }
+        private DocNavigator _docNavigator;
 
+        public string FileName { get; set; }
         public string MarkdownContent { get; set; }
         public string PortalUri { get; set; }
     }

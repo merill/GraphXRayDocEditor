@@ -44,7 +44,19 @@ namespace GraphXrayDocCreator
             return docMapList;
         }
 
-        private void SaveDocMapCollection(SortedDictionary<string, DocMap> docMaps)
+        public void Save(DocMap currentDocMap)
+        {
+            SaveDocMap(currentDocMap);
+            SaveDocMapCollection(_docMapList);
+        }
+
+        private void SaveDocMap(DocMap currentDocMap)
+        {
+            var filePath = GetMarkdownFullFilePath(currentDocMap.Markdown);
+            File.WriteAllText(filePath, currentDocMap.Markdown);
+        }
+
+        public void SaveDocMapCollection(SortedDictionary<string, DocMap> docMaps)
         {
             var list = (from p in docMaps.Values select p).ToArray();
 
@@ -53,24 +65,55 @@ namespace GraphXrayDocCreator
             File.WriteAllText(MapFilePath, json);
         }
 
-        public DocMap? GetDocMap(string chromePortalUri)
+        public DocMap GetDocMap(string chromePortalUri)
         {
             var portalUri = GetClearnUri(chromePortalUri);
             _docMapList.TryGetValue(portalUri, out DocMap docMap);
             //Read markdown file only if it has not been read before
-            if (docMap != null)
+            if (docMap == null) //Create a new page for saving
+            {
+                //Create a new empty file that will be daved to
+                var generatedNewMarkdownFileName = GenerateNewMarkdownFileNameFromUri(portalUri);
+                var markdownFullFilePath = GetMarkdownFullFilePath(generatedNewMarkdownFileName);
+                if (File.Exists(generatedNewMarkdownFileName)){
+                    throw new Exception($"File already exists at {generatedNewMarkdownFileName} but is not mapped to Uri);");
+                }
+                docMap = new DocMap()
+                {
+                    PortalUri = portalUri,
+                    Markdown = generatedNewMarkdownFileName,
+                    MarkdownContent = String.Format(@"---
+portalUri: ""{0}""
+---
+", portalUri)
+                };
+            }
+            else
             {
                 docMap.MarkdownContent = GetMarkdownContent(docMap.Markdown);
             }
             return docMap;
         }
 
+        private string GenerateNewMarkdownFileNameFromUri(string portalUri)
+        {
+            var markdownFileName = portalUri.Replace("https://portal.azure.com/#blade/", "").Replace("/", "-").Replace("?", "-");
+            markdownFileName += ".md";
+
+            return markdownFileName;
+
+        }
+
         private string GetMarkdownContent(string markdownFileName)
         {
             if (string.IsNullOrEmpty(markdownFileName)) { return null; }
-            var markdownFilePath = Path.Combine(_docRepoFolderPath, MarkdownDocRelativeFolderPath, markdownFileName);
+            var markdownFilePath = GetMarkdownFullFilePath(markdownFileName);
             var content = File.ReadAllText(markdownFilePath);
             return content;
+        }
+        private string GetMarkdownFullFilePath(string markdownFileName)
+        {
+            return Path.Combine(_docRepoFolderPath, MarkdownDocRelativeFolderPath, markdownFileName);
         }
 
         private string GetClearnUri(string portalUri)

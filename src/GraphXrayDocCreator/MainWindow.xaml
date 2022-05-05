@@ -37,10 +37,14 @@
             <StackPanel Orientation="Horizontal">
                 <TextBox x:Name="txtRepoPath" Text="C:\GitHub\SaveAsScriptHackathon" Width="200"/>
                 <Button x:Name="btnOpenRepo" Content="Open" Click="btnOpenRepo_Click"/>
+                <Button x:Name="btnSave" Content="Save" Click="btnSave_Click"/>
+
             </StackPanel>
 
             <Label x:Name="lblDocMapPortalUri" Content="DocMap Portal Uri:"/>
             <TextBox x:Name="txtDocMapPortalUri" />
+            <Label x:Name="lblFileName" Content="Filename:"/>
+            <TextBox x:Name="txtFileName" />
             <Label x:Name="lblMarkdown" Content="Markdown:"/>
             <TextBox x:Name="txtDocMapMarkdown" TextWrapping="Wrap"   AcceptsReturn="True"
   VerticalScrollBarVisibility="Visible" Text="" Width="Auto" Height="300" HorizontalAlignment="Stretch"/>

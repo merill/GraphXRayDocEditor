@@ -13,7 +13,7 @@ namespace WPFSample
     public partial class MainWindow : Window
     {
         private DocNavigator _docNavigator;
-        private DocMapModelView _currentDocMapView;
+        private DocMap _currentDocMap;
 
         public MainWindow()
         {
@@ -72,24 +72,29 @@ namespace WPFSample
         }
         public void LoadPage(string chromePortalUri)
         {
-            var docMap = _docNavigator.GetDocMap(chromePortalUri);
-            if(docMap == null)
-            {
-                ClearContent();
-            }
-            else
-            {
-                _currentDocMapView = new DocMapModelView(docMap);
-                txtDocMapMarkdown.Text = _currentDocMapView.MarkdownContent;
-                txtDocMapPortalUri.Text = _currentDocMapView.PortalUri;
-            }
+            _currentDocMap = _docNavigator.GetDocMap(chromePortalUri);
+            txtFileName.Text = _currentDocMap.Markdown;
+            txtDocMapMarkdown.Text = _currentDocMap.MarkdownContent;
+            txtDocMapPortalUri.Text = _currentDocMap.PortalUri;
+            txtFileName.IsReadOnly = !string.IsNullOrEmpty(txtFileName.Text);
+            txtDocMapPortalUri.IsReadOnly = !string.IsNullOrEmpty(txtFileName.Text);
         }
 
         private void ClearContent()
         {
             txtDocMapMarkdown.Text = string.Empty;
             txtDocMapPortalUri.Text = string.Empty;
+            txtFileName.Text = string.Empty;
 
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            _currentDocMap.Markdown = txtFileName.Text;
+            _currentDocMap.MarkdownContent= txtDocMapMarkdown.Text;
+            _currentDocMap.PortalUri = txtDocMapPortalUri.Text;
+
+            _docNavigator.Save(_currentDocMap);
         }
     }
 
