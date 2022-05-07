@@ -47,13 +47,14 @@ namespace GraphXrayDocCreator
         public void Save(DocMap currentDocMap)
         {
             SaveDocMap(currentDocMap);
+            _docMapList[currentDocMap.PortalUri] = currentDocMap;
             SaveDocMapCollection(_docMapList);
         }
 
         private void SaveDocMap(DocMap currentDocMap)
         {
             var filePath = GetMarkdownFullFilePath(currentDocMap.Markdown);
-            File.WriteAllText(filePath, currentDocMap.Markdown);
+            File.WriteAllText(filePath, currentDocMap.MarkdownContent);
         }
 
         public void SaveDocMapCollection(SortedDictionary<string, DocMap> docMaps)
