@@ -37,7 +37,7 @@
                 <TextBox Name="txtChromePortalUri" Grid.Row="0" Grid.Column="0"/>
                 <Button x:Name="ButtonGo" Grid.Row="0" Grid.Column="1" Width="100" Click="ButtonGo_Click" Content="Go"/>
             </Grid>
-            <controls:WebView2 x:Name="webView" Source="https://portal.azure.com" Grid.Row="1" Grid.Column="0"/>
+            <controls:WebView2 x:Name="webView" Grid.Row="1" Grid.Column="0"/>
         </Grid>
         <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10" >
             <TextBlock x:Name="lblErrorMessage" Text="NA" Visibility="Collapsed" Foreground="#FFED0A0A"/>

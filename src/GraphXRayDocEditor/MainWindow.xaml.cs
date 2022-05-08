@@ -28,26 +28,28 @@ namespace GraphXRayDocEditor
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const string AAD_PORTAL_URI = "https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade";
         private DocNavigator _docNavigator;
         private DocMap _currentDocMap;
 
         public MainWindow()
         {
             InitializeComponent();            
-            InitializeAsync();
             Title = "Graph X-Ray";
+
+            webView.Loaded += async (sender, e) =>
+            {
+                await webView.EnsureCoreWebView2Async();
+                webView.CoreWebView2.SourceChanged += CoreWebView2_SourceChanged;
+                webView.CoreWebView2.Navigate(AAD_PORTAL_URI);
+            };
+
         }
 
         private void CoreWebView2_SourceChanged(CoreWebView2 sender, CoreWebView2SourceChangedEventArgs args)
         {
             txtChromePortalUri.Text = webView.Source.ToString();
             PageChanged();
-        }
-
-        async void InitializeAsync()
-        {
-            await webView.EnsureCoreWebView2Async();
-            webView.CoreWebView2.SourceChanged += CoreWebView2_SourceChanged;
         }
 
         private async void ButtonGo_Click(object sender, RoutedEventArgs e)
@@ -59,7 +61,10 @@ namespace GraphXRayDocEditor
                     webView.CoreWebView2.Navigate(txtChromePortalUri.Text);
                 }
             }
-            catch { }
+            catch (Exception ex) 
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void btnOpenRepo_Click(object sender, RoutedEventArgs e)
