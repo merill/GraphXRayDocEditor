@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "GraphXRayDocEditor (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "GraphXRayDocEditor (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
