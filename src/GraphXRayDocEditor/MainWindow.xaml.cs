@@ -16,6 +16,10 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Popups;
+using System.Text;
+using System.Diagnostics;
+using System.Text.Json;
+using GraphXRayDocEditor.Model;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -42,7 +46,37 @@ namespace GraphXRayDocEditor
                 await webView.EnsureCoreWebView2Async();
                 webView.CoreWebView2.SourceChanged += CoreWebView2_SourceChanged;
                 webView.CoreWebView2.Navigate(AAD_PORTAL_URI);
+
+                string filter = "https://graph.microsoft.com/*";
+                webView.CoreWebView2.AddWebResourceRequestedFilter(filter, CoreWebView2WebResourceContext.All);
+                webView.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
+
             };
+
+        }
+
+        private void CoreWebView2_WebResourceRequested(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs e)
+        {
+            string postData = null;
+            var content = e.Request.Content;
+
+            // get content from stream
+            if (content != null)
+            {
+                string val = content.ToString();
+                using (var ms = new MemoryStream())
+                {
+                    content.AsStreamForRead().CopyTo(ms);
+                    ms.Position = 0;
+                    postData = Encoding.UTF8.GetString(ms.ToArray());
+                }
+            }
+            var url = e.Request.Uri.ToString();
+            var method = e.Request.Method;
+
+            SendMessageGraphCall(method, url, postData);
+            // for demo write out captured string vals
+            Debug.WriteLine($"{method} {url}\n{postData}\n---");
 
         }
 
@@ -108,7 +142,7 @@ namespace GraphXRayDocEditor
             txtFileName.IsReadOnly = !string.IsNullOrEmpty(txtFileName.Text);
             txtDocMapPortalUri.IsReadOnly = !string.IsNullOrEmpty(txtFileName.Text);
 
-            PreviewMarkdown();
+            SendMessagePreviewMarkdown();
         }
 
         private void ClearContent()
@@ -127,12 +161,39 @@ namespace GraphXRayDocEditor
 
             _docNavigator.Save(_currentDocMap);
 
-            PreviewMarkdown();
+            SendMessagePreviewMarkdown();
         }
 
-        private void PreviewMarkdown()
+        private void SendMessagePreviewMarkdown()
         {
-            webViewMarkdown.CoreWebView2.PostWebMessageAsString(_currentDocMap.MarkdownContent); //Refresh markdown
+            dynamic message = new
+            {
+                eventName = "PreviewMarkdown",
+                markdown = _currentDocMap.MarkdownContent
+            };
+
+            string messageJson = JsonSerializer.Serialize<object>(message);
+
+            webViewMarkdown.CoreWebView2.PostWebMessageAsString(messageJson); //Refresh markdown
+        }
+
+        private void SendMessageGraphCall(string reqMethod, string reqUrl, string reqBody)
+        {
+            if (reqMethod == "OPTIONS") return;
+
+            dynamic message = new
+            {
+                eventName = "GraphCall",
+                method = reqMethod,
+                url = reqUrl,
+                postData = new
+                {
+                    text = reqBody
+                }
+            };
+            string messageJson = JsonSerializer.Serialize<object>(message);
+            Debug.WriteLine(messageJson);
+            webViewGraphCall.CoreWebView2.PostWebMessageAsString(messageJson); //Refresh markdown
         }
     }
 }
