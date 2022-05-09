@@ -12,6 +12,22 @@
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
 		<UseWPF>False</UseWPF>
+		<Product>Graph X-Ray</Product>
+		<Description>View context sensitive PowerShell commands in the Microsoft Azure Active Directory Portal and use the Graph X-Ray feature in Developer Tools to view the Graph API commands and corresponding PowerShell commands of actions performed on the portal.</Description>
+		<PackageIcon>logo192.png</PackageIcon>
+		<AssemblyName>GraphXRay</AssemblyName>
+		<ApplicationIcon>icon.ico</ApplicationIcon>
+		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+		<GenerateAppInstallerFile>True</GenerateAppInstallerFile>
+		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+		<PackageCertificateKeyFile>GraphXRayDocEditor_TemporaryKey.pfx</PackageCertificateKeyFile>
+		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+		<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+		<GenerateTestArtifacts>True</GenerateTestArtifacts>
+		<AppxBundle>Never</AppxBundle>
+		<AppInstallerUri>https://graphxray.merill.net/app</AppInstallerUri>
+		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -30,8 +46,8 @@
 		<Content Include="Assets\Square150x150Logo.scale-200.png" />
 		<Content Include="Assets\Square44x44Logo.scale-200.png" />
 		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-		<Content Include="Assets\StoreLogo.png" />
 		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
+		<Content Include="icon.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -47,6 +63,10 @@
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Update="Data\GraphXRayReactApp\logo192.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	  <None Update="icon.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
