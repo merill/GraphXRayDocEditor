@@ -14,7 +14,7 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition />
+            <RowDefinition Height="Auto"/>
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
@@ -38,10 +38,9 @@
                 <TextBox Name="txtChromePortalUri" Grid.Row="0" Grid.Column="0"/>
                 <Button x:Name="ButtonGo" Grid.Row="0" Grid.Column="1" Width="100" Click="ButtonGo_Click" Content="Go"/>
             </Grid>
-            <controls:WebView2 x:Name="webView" Grid.Row="1" Grid.Column="0"
-                               Source="https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade"/>
+            <controls:WebView2 x:Name="webView" Grid.Row="1" Grid.Column="0" Source="https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade"/>
         </Grid>
-        <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10" >
+        <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10" Visibility="Collapsed" Name="pnlEditor">
             <TextBlock x:Name="lblErrorMessage" Text="NA" Visibility="Collapsed" Foreground="#FFED0A0A"/>
             <TextBlock x:Name="label" Text="Graph X-Ray repo folder:"/>
             <StackPanel Orientation="Horizontal">
@@ -59,7 +58,7 @@
             <TextBox x:Name="txtDocMapMarkdown" TextWrapping="Wrap"   AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                      Text="" Width="Auto" Height="300" HorizontalAlignment="Stretch"/>
         </StackPanel>
-        <controls:WebView2 x:Name="webViewMarkdown" Source="C:\GitHub\SaveAsScriptHackathon\dev\popup.html" Grid.Row="1" Grid.Column="1"/>
-        <controls:WebView2 x:Name="webViewGraphCall" Source="C:\GitHub\SaveAsScriptHackathon\dev\devtools.html" Grid.Row="2" Grid.Column="1"/>
+        <controls:WebView2 x:Name="webViewMarkdown" Grid.Row="1" Grid.Column="1"/>
+        <controls:WebView2 x:Name="webViewGraphCall" Grid.Row="2" Grid.Column="1"/>
     </Grid>
 </Window>

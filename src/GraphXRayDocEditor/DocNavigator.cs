@@ -1,7 +1,6 @@
 ﻿using GraphXrayDocCreator.Model;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -11,22 +10,46 @@ namespace GraphXrayDocCreator
 {
     internal class DocNavigator
     {
-        string _docRepoFolderPath;
-        const string MapRelativeFilePath = @"src\doc\map.json";
-        const string MarkdownDocRelativeFolderPath = @"public\doc";
-        private SortedDictionary<string, DocMap> _docMapList;
-        private string MapFilePath { get { return Path.Combine(_docRepoFolderPath, MapRelativeFilePath); } }
+        private readonly string _mapFilePath;
+        private readonly string _markdownFolderPath;
 
-        public DocNavigator(string docRepoFolderPath)
+        private SortedDictionary<string, DocMap> _docMapList;
+        
+
+        /// <summary>
+        /// If isEditMode = true then (file will be saved back for check-in)
+        ///     docFolderPath should be = Root of Repo folder (eg. C:\GitHub\SaveAsScriptHackathon)
+        /// else
+        ///     docFolderPath should be = folder \Data\GraphXRayReactApp
+        /// </summary>
+        /// <param name="isEditMode"></param>
+        /// <param name="docFolderPath"></param>
+        public DocNavigator(bool isEditMode, string docFolderPath)
         {
-            _docRepoFolderPath = docRepoFolderPath;
-            if (!Directory.Exists(_docRepoFolderPath))
+            if (isEditMode) //Use the original map.json in the editor
+            {
+                _markdownFolderPath = Path.Combine(docFolderPath, @"public\doc");
+                _mapFilePath = Path.Combine(docFolderPath, @"src\doc\map.json");
+            }
+            else //This is the npm 'build' package folder
+            {
+                _markdownFolderPath = Path.Combine(docFolderPath, "doc");
+                _mapFilePath = Path.Combine(docFolderPath, @"doc\map.json");
+            }
+
+            Init(docFolderPath);
+        }
+
+
+        private void Init(string docFolderPath)
+        {
+            if (!Directory.Exists(docFolderPath))
             {
                 throw new ArgumentException("Incorrect folder path.");
             }
-            if (!File.Exists(MapFilePath))
+            if (!File.Exists(_mapFilePath))
             {
-                throw new FileNotFoundException($"map.json was not found at {MapFilePath}");
+                throw new FileNotFoundException($"map.json was not found at {_mapFilePath}");
             }
 
             _docMapList = LoadDocMapCollection();
@@ -34,7 +57,7 @@ namespace GraphXrayDocCreator
 
         private SortedDictionary<string, DocMap> LoadDocMapCollection()
         {
-            var json = File.ReadAllText(MapFilePath);
+            var json = File.ReadAllText(_mapFilePath);
             var docMaps = JsonSerializer.Deserialize<List<DocMap>>(json);
             var docMapList = new SortedDictionary<string, DocMap>();
             foreach (var docMap in docMaps)
@@ -63,7 +86,7 @@ namespace GraphXrayDocCreator
 
             var options = new JsonSerializerOptions { WriteIndented = true };
             var json = JsonSerializer.Serialize(list, options);
-            File.WriteAllText(MapFilePath, json);
+            File.WriteAllText(_mapFilePath, json);
         }
 
         public DocMap GetDocMap(string chromePortalUri)
@@ -76,7 +99,8 @@ namespace GraphXrayDocCreator
                 //Create a new empty file that will be daved to
                 var generatedNewMarkdownFileName = GenerateNewMarkdownFileNameFromUri(portalUri);
                 var markdownFullFilePath = GetMarkdownFullFilePath(generatedNewMarkdownFileName);
-                if (File.Exists(generatedNewMarkdownFileName)){
+                if (File.Exists(generatedNewMarkdownFileName))
+                {
                     throw new Exception($"File already exists at {generatedNewMarkdownFileName} but is not mapped to Uri);");
                 }
                 docMap = new DocMap()
@@ -114,7 +138,7 @@ portalUri: ""{0}""
         }
         private string GetMarkdownFullFilePath(string markdownFileName)
         {
-            return Path.Combine(_docRepoFolderPath, MarkdownDocRelativeFolderPath, markdownFileName);
+            return Path.Combine(_markdownFolderPath, markdownFileName);
         }
 
         private string GetClearnUri(string portalUri)

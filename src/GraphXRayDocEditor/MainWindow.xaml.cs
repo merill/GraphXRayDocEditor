@@ -2,24 +2,14 @@
 using GraphXrayDocCreator;
 using GraphXrayDocCreator.Model;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Popups;
 using System.Text;
 using System.Diagnostics;
 using System.Text.Json;
-using GraphXRayDocEditor.Model;
+using Windows.ApplicationModel;
+using Microsoft.UI.Windowing;
+using Microsoft.UI;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -33,28 +23,66 @@ namespace GraphXRayDocEditor
     public partial class MainWindow : Window
     {
         private const string AAD_PORTAL_URI = "https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade";
+        public bool IsEditMode { get; set; }
         private DocNavigator _docNavigator;
         private DocMap _currentDocMap;
-
+        private bool _isActivated = false;
         public MainWindow()
         {
-            InitializeComponent();            
+            IsEditMode = false;
+#if DEBUG
+            IsEditMode = false;
+#endif
+            InitializeComponent();
             Title = "Graph X-Ray";
 
-            webView.Loaded += async (sender, e) =>
+            if (AppWindowTitleBar.IsCustomizationSupported())
             {
-                await webView.EnsureCoreWebView2Async();
-                webView.CoreWebView2.SourceChanged += CoreWebView2_SourceChanged;
-                webView.CoreWebView2.Navigate(AAD_PORTAL_URI);
+                IntPtr windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(this);
+                WindowId windowId = Win32Interop.GetWindowIdFromWindow(windowHandle);
+                var appWindow = AppWindow.GetFromWindowId(windowId);
+                appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, "icon.ico"));
+            }
+            //webView.Loaded += async (sender, e) =>
+            //{
 
-                string filter = "https://graph.microsoft.com/*";
-                webView.CoreWebView2.AddWebResourceRequestedFilter(filter, CoreWebView2WebResourceContext.All);
-                webView.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
 
-            };
-
+            //};
+            
+            this.Activated += Current_Activated;
         }
 
+        private async void Current_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            if (!_isActivated)
+            {
+                if (IsEditMode)
+                {
+                    pnlEditor.Visibility = Visibility.Visible;
+                }
+                await webView.EnsureCoreWebView2Async();
+                await webViewGraphCall.EnsureCoreWebView2Async();
+                await webViewMarkdown.EnsureCoreWebView2Async();
+
+                InitializeAsync();
+            }
+            _isActivated = true;
+        }
+
+        private async void InitializeAsync()
+        {
+
+            string filter = "https://graph.microsoft.com/*";
+            webView.CoreWebView2.AddWebResourceRequestedFilter(filter, CoreWebView2WebResourceContext.All);
+            webView.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
+
+            txtChromePortalUri.Text = AAD_PORTAL_URI;
+            webView.CoreWebView2.Navigate(AAD_PORTAL_URI);
+            PageChanged(AAD_PORTAL_URI);
+
+            webView.CoreWebView2.SourceChanged += CoreWebView2_SourceChanged;
+
+        }
         private void CoreWebView2_WebResourceRequested(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs e)
         {
             string postData = null;
@@ -82,8 +110,8 @@ namespace GraphXRayDocEditor
 
         private void CoreWebView2_SourceChanged(CoreWebView2 sender, CoreWebView2SourceChangedEventArgs args)
         {
-            txtChromePortalUri.Text = webView.Source.ToString();
-            PageChanged();
+            txtChromePortalUri.Text = webView.Source.ToString(); //When user browses to new page by clicking on link
+            PageChanged(txtChromePortalUri.Text);
         }
 
         private async void ButtonGo_Click(object sender, RoutedEventArgs e)
@@ -103,7 +131,7 @@ namespace GraphXRayDocEditor
 
         private void btnOpenRepo_Click(object sender, RoutedEventArgs e)
         {
-            PageChanged();
+            PageChanged(txtChromePortalUri.Text);
         }
         private void ShowError(string message)
         {
@@ -115,15 +143,30 @@ namespace GraphXRayDocEditor
         {
             lblErrorMessage.Visibility = Visibility.Collapsed;
         }
-        private void PageChanged()
+        private void PageChanged(string newUri)
         {
             try
             {
                 if (_docNavigator == null)
                 {
-                    _docNavigator = new DocNavigator(txtRepoPath.Text);
+                    string docFolderPath;
+                    string reactFolderPath;
+                    if(IsEditMode)
+                    {
+                        docFolderPath = txtRepoPath.Text;
+                        reactFolderPath = Path.Combine(docFolderPath, "dev");
+                    }
+                    else
+                    {
+                        docFolderPath = Path.Combine(Package.Current.InstalledLocation.Path, @"Data\GraphXRayReactApp");
+                        reactFolderPath = docFolderPath;
+                    }
+                    webViewGraphCall.Source = new Uri(Path.Combine(reactFolderPath, "devtools.html"));
+                    webViewMarkdown.Source = new Uri(Path.Combine(reactFolderPath, "popup.html"));
+
+                    _docNavigator = new DocNavigator(IsEditMode, docFolderPath);
                 }
-                LoadPage(txtChromePortalUri.Text);
+                LoadPage(newUri);
 
                 ClearError();
             }
