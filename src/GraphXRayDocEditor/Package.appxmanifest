@@ -9,8 +9,8 @@
 
   <Identity
     Name="35287Merill.GraphX-Ray"
-    Publisher="CN=Merill"
-    Version="1.0.0.0" />
+    Publisher="CN=2F52E7FB-2AEA-4DC6-89FA-8CBE2BE431F0"
+    Version="1.0.7.0" />
 
   <Properties>
     <DisplayName>Graph X-Ray</DisplayName>
@@ -47,5 +47,5 @@
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
 
-  <mp:PhoneIdentity PhoneProductId="6e52f3e8-ff76-4279-8b14-109619ef898c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="4c88a8cd-f081-4fbd-8dbd-9d5afa3c5118" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 </Package>
